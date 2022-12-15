@@ -11,6 +11,28 @@ const client = new Discord.Client({
     ],
 });
 
+const commands = [
+	{
+		name: 'ping',
+		description: 'Replies with Pong!',
+	}
+]
+
+const rest = new Discord.REST({version: '10'}).setToken(process.env.BOT_TOKEN);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(Discord.Routes.applicationGuildCommands("1052948545818345574", "1007372910903693553"), {body: commands});
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
+
+
 // On client ready do something
 client.on('ready', () => {
     // Send an console log to check which bot we are
@@ -25,6 +47,13 @@ client.on('ready', () => {
         status: config.bot.status.state,
     });
 });
+
+client.on('interactionCreate', (interaction) => {
+	if (interaction.isChatInputCommand()) {
+		console.log('hello world');
+		interaction.reply({content: 'Pong'});
+	}
+})
 
 client.on('guildMemberAdd', (member) => {
     // Get the channel with the specified ID
@@ -44,5 +73,11 @@ client.on('guildMemberAdd', (member) => {
     // Send the embed message to the specified channel
     channel.send({ embeds: [WelcomeEmbed] });
 });
+
+client.on('message', message => {
+	if (message.content === '/server') {
+	  message.channel.send(`The server IP is ${config.server.ip}`);
+	}
+  });
 
 client.login(process.env.BOT_TOKEN); // Log in to the bot using the specified token
