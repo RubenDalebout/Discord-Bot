@@ -1,0 +1,14 @@
+{
+    "bot": {
+        "name": "BrotherHoods",
+        "status": {
+            "message": "Watching BrotherHoods Season #1",
+            "state": "dnd",
+            "type": "watching"
+        }
+    },
+    "server": {
+        "name": "BrotherHoods",
+        "ip": "athal.brotherhoods.com"
+    }
+}  
