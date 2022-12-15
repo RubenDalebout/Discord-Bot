@@ -50,7 +50,6 @@ client.on('ready', () => {
 
 client.on('interactionCreate', (interaction) => {
 	if (interaction.isChatInputCommand()) {
-		console.log('hello world');
 		interaction.reply({content: 'Pong'});
 	}
 })
@@ -61,18 +60,19 @@ client.on('guildMemberAdd', (member) => {
 
     // Create a new embed message
     const WelcomeEmbed = new Discord.EmbedBuilder()
-    .setColor(config.bot.colors.primary)
-    .setTitle(config.embeds.welcome.title)
-    .setDescription(config.embeds.welcome.description.replace('{userID}', `<@${member.user.id}>`))
-    .setThumbnail(config.bot.avatar)
-    .setTimestamp()
-    .setFooter({ 
-        text: config.server.name, 
-    });
+        .setColor(config.bot.colors.primary)
+        .setTitle(config.embeds.welcome.title)
+        .setDescription(config.embeds.welcome.description.replace('{userID}', `<@${member.user.id}>`))
+        .setThumbnail(member.user.displayAvatarURL()) // Use the joined user's avatar as the thumbnail
+        .setTimestamp()
+        .setFooter({ 
+            text: config.server.name, 
+        });
 
     // Send the embed message to the specified channel
     channel.send({ embeds: [WelcomeEmbed] });
 });
+
 
 client.on('message', message => {
 	if (message.content === '/server') {
