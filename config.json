@@ -5,7 +5,12 @@
             "message": "Watching BrotherHoods Season #1",
             "state": "dnd",
             "type": "watching"
-        }
+        },
+        "colors": {
+            "primary": "#c9b173",
+            "secondary": "#844454"
+        },
+        "avatar": "https://i.imgur.com/ID6ivPy.png" 
     },
     "server": {
         "name": "BrotherHoods",
