@@ -7,13 +7,19 @@
             "type": "watching"
         },
         "colors": {
-            "primary": "#c9b173",
-            "secondary": "#844454"
+            "primary": "#844454",
+            "secondary": "#c9b173"
         },
         "avatar": "https://i.imgur.com/ID6ivPy.png" 
     },
     "server": {
         "name": "BrotherHoods",
         "ip": "athal.brotherhoods.com"
+    },
+    "embeds": {
+        "welcome": {
+            "title": "Welcome in the BrotherHoods Discord",
+            "description": "Welcome to the server, {userID}! 🎉 We are glad to have you join us in the BrotherHoods community. Please take a moment to read through our rules and guidelines, and don't hesitate to reach out to a member of the community or a moderator if you have any questions or need any help. We look forward to getting to know you better and having you be a part of our community."
+        }
     }
 }  
