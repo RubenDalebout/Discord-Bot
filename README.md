@@ -1,4 +1,4 @@
-# brotherhoods-bot
+# BrotherHoods Bot
 
 ## Install modules
 ```sh
