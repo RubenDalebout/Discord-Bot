@@ -3,8 +3,7 @@
         "name": "BrotherHoods",
         "status": {
             "message": "Watching BrotherHoods Season #1",
-            "state": "dnd",
-            "type": "watching"
+            "state": "dnd"
         },
         "colors": {
             "primary": "#844454",
@@ -25,7 +24,7 @@
             "title": "✨ BrotherHoods Discord Rules ✨",
             "rows": [
                 "Be respectful to all members of the BrotherHoods community.",
-                "No cheating, hacking, or exploiting in the game.",
+                "No cheating, hacking, or exploiting in the Discord.",
                 "No spamming or excessive use of caps in chat.",
                 "No sharing personal information of others without their consent.",
                 "No excessive trolling or harassment of other players.",
@@ -35,7 +34,10 @@
                 "Keep discussions and content appropriate for all ages.",
                 "Any violations of these rules will result in appropriate disciplinary action, including but not limited to warnings, kicks, and bans."
             ],
-            "footer": "By joining the BrotherHoods community, you also agree to abide by the general Discord terms of service and community guidelines. Any violations of these rules may result in disciplinary action from both the BrotherHoods moderators and Discord administrators. Let's all work together to create a fun and inclusive environment for everyone to enjoy."
+            "permission": [
+                "1007585274945085500"
+            ],
+            "description": "By joining the BrotherHoods community, you also agree to abide by the general Discord terms of service and community guidelines. Any violations of these rules may result in disciplinary action from both the BrotherHoods moderators and Discord administrators. Let's all work together to create a fun and inclusive environment for everyone to enjoy."
         }
     }
 }  

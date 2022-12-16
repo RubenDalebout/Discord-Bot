@@ -42,7 +42,7 @@ client.on('ready', () => {
     client.user.setPresence({
         activities: [{
             name: config.bot.status.message,
-            type: Discord.ActivityType[config.bot.status.type]
+            type: Discord.ActivityType.Watching
         }],
         status: config.bot.status.state,
     });
@@ -73,11 +73,27 @@ client.on('guildMemberAdd', (member) => {
     channel.send({ embeds: [WelcomeEmbed] });
 });
 
+client.on('messageCreate', message => {
+    if (message.content === '!rules' && message.member.roles.cache.some(role => config.embeds.rules.permission.includes(role.id))) {
+        const channel = message.channel;
+        const embed = new Discord.EmbedBuilder()
+            .setColor(config.bot.colors.primary)
+            .setTitle(config.embeds.rules.title)
+            .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
+            .setDescription(`
+            ${Object.values(config.embeds.rules.rows).map((row, index) => `${index+1}. ${row}`).join('\n')}
 
-client.on('message', message => {
-	if (message.content === '/server') {
-	  message.channel.send(`The server IP is ${config.server.ip}`);
-	}
-  });
+            ${config.embeds.rules.description}
+            `)
+            .setTimestamp()
+            .setFooter({ 
+                text: config.server.name, 
+            });
+        channel.send({embeds: [embed]}).then(() => {
+            // Delete the user's message
+            message.delete();
+        });
+    }
+});
 
 client.login(process.env.BOT_TOKEN); // Log in to the bot using the specified token
