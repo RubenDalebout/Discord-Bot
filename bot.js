@@ -15,7 +15,25 @@ const commands = [
 	{
 		name: 'ping',
 		description: 'Replies with Pong!',
-	}
+	},
+    {
+        name: 'embed',
+        description: 'Create your own embed with our bot',
+        options: [
+            {
+                name: 'title',
+                description: 'The title of the embed',
+                type: 3,
+                required: true,
+            },
+            {
+                name: 'description',
+                description: 'The title of the embed',
+                type: 3,
+                required: true,
+            }
+        ]
+    }
 ]
 
 const rest = new Discord.REST({version: '10'}).setToken(process.env.BOT_TOKEN);
@@ -50,7 +68,27 @@ client.on('ready', () => {
 
 client.on('interactionCreate', (interaction) => {
 	if (interaction.isChatInputCommand()) {
-		interaction.reply({content: 'Pong'});
+        if (interaction.commandName === 'ping') {
+            interaction.reply({content: 'Pong'});
+        }
+
+        if (interaction.commandName === 'embed') {
+            // Create a new embed message
+            const WelcomeEmbed = new Discord.EmbedBuilder()
+            .setColor(config.bot.colors.primary)
+            .setTitle(interaction.options.get('title').value)
+            .setDescription(interaction.options.get('description').value)
+            .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
+            .setTimestamp()
+            .setFooter({ 
+                text: config.server.name, 
+            });
+
+            // Send the embed message to the specified channel
+            interaction.channel.send({ embeds: [WelcomeEmbed] });
+
+            interaction.delete();
+        }
 	}
 })
 
