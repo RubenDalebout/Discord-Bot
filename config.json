@@ -2,7 +2,7 @@
     "bot": {
         "name": "BrotherHoods",
         "status": {
-            "message": "Watching BrotherHoods Season #1",
+            "message": "BrotherHoods Season #1",
             "state": "dnd"
         },
         "colors": {
