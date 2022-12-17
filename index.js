@@ -45,7 +45,19 @@ const commands = [
                 required: true,
             },
         ]
-    }
+    },
+    {
+        name: 'suggestion',
+        description: 'Send your suggestion for our server(s) through this command!',
+        options: [
+            {
+                name: 'description',
+                description: 'Detailed text about your suggestion.',
+                type: 3,
+                required: true,
+            },
+        ]
+    },
 ]
 
 const rest = new Discord.REST({version: '10'}).setToken(process.env.BOT_TOKEN);
@@ -54,7 +66,7 @@ const rest = new Discord.REST({version: '10'}).setToken(process.env.BOT_TOKEN);
 	try {
 		console.log('Started refreshing application (/) commands.');
 
-		await rest.put(Discord.Routes.applicationGuildCommands("1052948545818345574", "1007372910903693553"), {body: commands});
+		await rest.put(Discord.Routes.applicationGuildCommands(process.env.APPLICATION_ID, process.env.GUILD_ID), {body: commands});
 
 		console.log('Successfully reloaded application (/) commands.');
 	} catch (error) {
@@ -146,6 +158,40 @@ client.on('interactionCreate', (interaction) => {
                     interaction.deleteReply();
                 });
             });
+        }
+
+        // Suggestion command
+        if (interaction.commandName === 'suggestion') {
+            // Get the number of messages to delete
+            const description = interaction.options.get('description').value;
+            const channel = client.channels.cache.get(config.suggestions.channel);
+
+            // When channel is find
+            if (channel) {
+                // Create a new embed message
+                const embed = new Discord.EmbedBuilder()
+                .setColor(config.bot.colors.primary)
+                .setTitle('Suggestion from ' + interaction.user.tag)
+                .setDescription(description.replace(new RegExp("\\\\n", "g"), "\n"))
+                .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
+                .setTimestamp()
+                .setFooter({ 
+                    text: config.server.name, 
+                });
+
+                // Send the embed message to the specified channel
+                channel.send({embeds: [embed]}).then((message) => {
+                    for (const emoji of config.suggestions.emojis) {
+                        message.react(emoji);
+                    }
+                    // Delete the user's message
+                    interaction.reply({content: 'Embed aangemaakt'}).then(() => {
+                        interaction.deleteReply();
+                    });
+                });
+            } else {
+                console.error('Provided channel for suggestions does not exists!');
+            }
         }
 	}
 })

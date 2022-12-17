@@ -15,6 +15,10 @@
         "name": "BrotherHoods",
         "ip": "athal.brotherhoods.com"
     },
+    "suggestions": {
+        "channel": "1053731697193140407",
+        "emojis": ["👍", "👎"]
+    },
     "embeds": {
         "clear": {
             "description": "Hey {userID}, ik heb net `{amount}` berichten voor je verwijderd! :broom:"
