@@ -28,10 +28,22 @@ const commands = [
             },
             {
                 name: 'description',
-                description: 'The title of the embed',
+                description: `The description of the embed. To allow line breaks type backslash + n in your message`,
                 type: 3,
                 required: true,
             }
+        ]
+    },
+    {
+        name: 'clear',
+        description: 'Clear the amount of message you provide',
+        options: [
+            {
+                name: 'amount',
+                description: 'The amount of messages you want to delete',
+                type: 4,
+                required: true,
+            },
         ]
     }
 ]
@@ -72,12 +84,55 @@ client.on('interactionCreate', (interaction) => {
             interaction.reply({content: 'Pong'});
         }
 
+        // Clear command
+        if (interaction.commandName === 'clear') {
+            // Get the number of messages to delete
+            const amount = interaction.options.get('amount').value;
+
+            // Fetch the specified number of messages in the interaction channel
+            interaction.channel.messages.fetch({ limit: amount }).then(messages => {
+                // Extract the message IDs from the message objects
+                const messageIds = messages.map(message => message.id);
+
+                // Delete the messages using the bulkDelete method
+                interaction.channel.bulkDelete(messageIds).then(() => {
+                    // Create a new embed message
+                    const embed = new Discord.EmbedBuilder()
+                        .setColor(config.bot.colors.primary)
+                        .setTitle(config.bot.name)
+                        .setDescription(config.embeds.clear.description.replace('{amount}', amount).replace('{userID}', '<@' + interaction.user.id + '>'))
+                        .setTimestamp()
+                        .setFooter({ 
+                            text: config.server.name, 
+                        });
+
+                    // Send the embed message to the specified channel
+                    interaction.channel.send({embeds: [embed]}).then(message => {
+                        // Store a reference to the message object
+                        const embedMessage = message;
+
+                        // Delete the user's message
+                        interaction.reply({content: 'Embed aangemaakt'}).then(() => {
+                            interaction.deleteReply();
+                        });
+
+                        setTimeout(() => {
+                            // Delete the embed message using the delete method
+                            embedMessage.delete();
+                        }, 5000);
+                    });
+                });
+            });
+        }
+
+
+        // Embed command
         if (interaction.commandName === 'embed') {
             // Create a new embed message
-            const WelcomeEmbed = new Discord.EmbedBuilder()
+            const embed = new Discord.EmbedBuilder()
             .setColor(config.bot.colors.primary)
             .setTitle(interaction.options.get('title').value)
-            .setDescription(interaction.options.get('description').value)
+            .setDescription(interaction.options.get('description').value.replace(new RegExp("\\\\n", "g"), "\n"))
             .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
             .setTimestamp()
             .setFooter({ 
@@ -85,9 +140,12 @@ client.on('interactionCreate', (interaction) => {
             });
 
             // Send the embed message to the specified channel
-            interaction.channel.send({ embeds: [WelcomeEmbed] });
-
-            interaction.delete();
+            interaction.channel.send({embeds: [embed]}).then(() => {
+                // Delete the user's message
+                interaction.reply({content: 'Embed aangemaakt'}).then(() => {
+                    interaction.deleteReply();
+                });
+            });
         }
 	}
 })
