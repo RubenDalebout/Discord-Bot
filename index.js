@@ -91,6 +91,7 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', (interaction) => {
+    // Commands
 	if (interaction.isChatInputCommand()) {
         if (interaction.commandName === 'ping') {
             interaction.reply({content: 'Pong'});
@@ -136,7 +137,6 @@ client.on('interactionCreate', (interaction) => {
                 });
             });
         }
-
 
         // Embed command
         if (interaction.commandName === 'embed') {
@@ -194,6 +194,21 @@ client.on('interactionCreate', (interaction) => {
             }
         }
 	}
+
+    // Select menu
+    if (interaction.isStringSelectMenu()) {
+        // Check id from the select menu
+        console.log('custom id: ' + interaction.customId)
+        console.log('id: ' + interaction.id )
+        console.log('name: ' + interaction.name)
+        
+
+        if (interaction.customId === 'select') {
+            const value = interaction;
+
+            console.log(`Selected opton with value: ${value}`);
+        }
+    }
 })
 
 client.on('guildMemberAdd', (member) => {
@@ -241,7 +256,6 @@ client.on('messageCreate', message => {
         const channel = message.channel;
 
         const select = new Discord.StringSelectMenuBuilder()
-            .setCustomId('select')
             .setPlaceholder('Nothing selected');
 
         for (const option of config.embeds.tickets.options) {
@@ -253,7 +267,7 @@ client.on('messageCreate', message => {
         }
 
         const row = new Discord.ActionRowBuilder().addComponents(select);
-    
+
         const embed = new Discord.EmbedBuilder()
             .setColor(config.bot.colors.primary)
             .setTitle(config.embeds.tickets.title)
@@ -267,6 +281,7 @@ client.on('messageCreate', message => {
             // Delete the user's message
             message.delete();
         });
+
     }
        
 });
