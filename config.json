@@ -19,6 +19,30 @@
         "channel": "1053725104900689960",
         "emojis": ["👍", "👎"]
     },
+    "tickets": {
+        "categories": {
+            "tickets-discord": {
+                "categoryID": false,
+                "roles": [false]
+            },
+            "tickets-minecraft": {
+                "categoryID": false,
+                "roles": [false]
+            },
+            "tickets-website": {
+                "categoryID": false,
+                "roles": [false]
+            },
+            "tickets-shop": {
+                "categoryID": false,
+                "roles": [false]
+            },
+            "tickets-question": {
+                "categoryID": false,
+                "roles": [false]
+            }
+        }
+    },
     "embeds": {
         "clear": {
             "description": "Hey {userID}, ik heb net `{amount}` berichten voor je verwijderd! :broom:"
