@@ -45,6 +45,60 @@
                 "1007585274945085500"
             ],
             "description": "By joining the BrotherHoods community, you also agree to abide by the general Discord terms of service and community guidelines. Any violations of these rules may result in disciplinary action from both the BrotherHoods moderators and Discord administrators. Let's all work together to create a fun and inclusive environment for everyone to enjoy."
+        },
+        "tickets": {
+            "title": "✨ BrotherHoods Helpdesk ✨",
+            "permission": [
+                "1007585274945085500"
+            ],
+            "options": [
+                {
+                    "ID": "tickets-discord",
+                    "emoji": {
+                        "id": "1054105254247010324",
+                        "name": "discord"
+                    },
+                    "label": "Discord Server",
+                    "color": 1
+                },
+                {
+                    "ID": "tickets-minecraft",
+                    "emoji": {
+                        "id": "1054105255312363521",
+                        "name": "minecraft"
+                    },
+                    "label": "Minecraft Server",
+                    "color": 1
+                },
+                {
+                    "ID": "tickets-question",
+                    "emoji": {
+                        "id": "❓",
+                        "name": ""
+                    },
+                    "label": "Other problems",
+                    "color": 1
+                },
+                {
+                    "ID": "tickets-website",
+                    "emoji": {
+                        "id": "🌐",
+                        "name": ""
+                    },
+                    "label": "Website",
+                    "color": 1
+                },
+                {
+                    "ID": "tickets-shop",
+                    "emoji": {
+                        "id": "🛒",
+                        "name": ""
+                    },
+                    "label": "Shop",
+                    "color": 1
+                }
+            ],
+            "description": "If you have any questions, please feel free to select a topic from the options below. Our support team at BrotherHoods is happy to assist you. We are here to help and we look forward to answering your questions.\n\nSincerely,\n\nThe BrotherHoods team."
         }
     }
 }  

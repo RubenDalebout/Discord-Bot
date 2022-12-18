@@ -236,6 +236,39 @@ client.on('messageCreate', message => {
             message.delete();
         });
     }
+
+    if (message.content === '!tickets' /*&& message.member.roles.cache.some(role => config.embeds.rules.permission.includes(role.id))*/) {
+        const channel = message.channel;
+
+        const select = new Discord.StringSelectMenuBuilder()
+            .setCustomId('select')
+            .setPlaceholder('Nothing selected');
+
+        for (const option of config.embeds.tickets.options) {
+            select.addOptions({
+                label: option.label,
+                value: option.ID,
+                emoji: option.emoji.id
+            });
+        }
+
+        const row = new Discord.ActionRowBuilder().addComponents(select);
+    
+        const embed = new Discord.EmbedBuilder()
+            .setColor(config.bot.colors.primary)
+            .setTitle(config.embeds.tickets.title)
+            .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
+            .setDescription(config.embeds.tickets.description.replace(new RegExp("\\\\n", "g"), "\n"))
+            .setTimestamp()
+            .setFooter({ 
+                text: config.server.name, 
+            });
+        channel.send({ embeds: [embed], components: [row] }).then(() => {
+            // Delete the user's message
+            message.delete();
+        });
+    }
+       
 });
 
 client.login(process.env.BOT_TOKEN); // Log in to the bot using the specified token
