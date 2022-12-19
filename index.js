@@ -1,4 +1,6 @@
 require('dotenv').config(); // Import dotenv config
+const fs = require('fs');
+
 const Discord = require('discord.js'); // Import the discord.js module
 const config = require('./config.json'); // Import the config.json file
 
@@ -195,18 +197,71 @@ client.on('interactionCreate', (interaction) => {
         }
 	}
 
-    // Select menu
     if (interaction.isStringSelectMenu()) {
-        // Check id from the select menu
-        console.log('custom id: ' + interaction.customId)
-        console.log('id: ' + interaction.id )
-        console.log('name: ' + interaction.name)
-        
+        if (interaction.customId == 'tickets-select') {
+            const value = interaction.values[0];
+            
+            if (config.tickets.categories[value] !== undefined) {
+                const obj = config.tickets.categories[value];
+                
+                // Check if category exists in obj
+                if (obj.categoryID !== undefined) {
+                    const categoryId = obj.categoryID;
+                    const guild = client.guilds.cache.get(process.env.GUILD_ID); // Replace GUILD_ID with the actual ID of the guild
+                    
+                    // Get the channel with the specified ID
+                    const channel = client.channels.cache.get(categoryId);
 
-        if (interaction.customId === 'select') {
-            const value = interaction;
-
-            console.log(`Selected opton with value: ${value}`);
+                    if (channel.type === 4) {
+                        // Read and parse the tickets.json file
+                        fs.readFile('./tickets.json', 'utf8', function(err, data) {
+                          if (err) throw err;
+                      
+                          // Parse the contents of the file into a JavaScript object
+                          let tickets = JSON.parse(data);
+                      
+                          // Initialize the tickets object as an empty array if it is currently an empty object
+                          if (Object.keys(tickets).length === 0 && tickets.constructor === Object) {
+                            tickets = [];
+                          }
+                      
+                          // Check if the user already has a ticket in the tickets.json file
+                          const existingTicket = tickets.find(ticket => ticket.owner === interaction.user.id);
+                      
+                          // If the user does not have an existing ticket, create a new one
+                          if (!existingTicket) {
+                            // Create the new channel within the category
+                            guild.channels.create({
+                              name: "ticket-" + interaction.user.tag,
+                              type: Discord.ChannelType.GuildText,
+                              parent: categoryId,
+                              // your permission overwrites or other options here
+                            }).then(channel => {
+                              // Add the user ID and channel information to the tickets.json file
+                              tickets.push({
+                                channel: channel.id,
+                                owner: interaction.user.id,
+                                muted: false,
+                                allowedUsers: [interaction.user.id],
+                                allowedRoles: []
+                              });
+                      
+                              fs.writeFile('./tickets.json', JSON.stringify(tickets), 'utf8', function(err) {
+                                if (err) throw err;
+                                console.log('Successfully added user ID to tickets.json file');
+                              });
+                            }).catch(error => {
+                              console.log(error)
+                            });
+                          } else {
+                            // If the user already has an existing ticket, send a message indicating that they already have a ticket
+                            console.log('User already has an existing ticket');
+                          }
+                        });
+                      }
+                      
+                }
+            }
         }
     }
 })
@@ -256,6 +311,7 @@ client.on('messageCreate', message => {
         const channel = message.channel;
 
         const select = new Discord.StringSelectMenuBuilder()
+            .setCustomId('tickets-select')
             .setPlaceholder('Nothing selected');
 
         for (const option of config.embeds.tickets.options) {

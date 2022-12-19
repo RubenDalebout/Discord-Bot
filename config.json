@@ -22,24 +22,24 @@
     "tickets": {
         "categories": {
             "tickets-discord": {
-                "categoryID": false,
-                "roles": [false]
+                "categoryID": "1054449775354839181",
+                "roles": []
             },
             "tickets-minecraft": {
-                "categoryID": false,
-                "roles": [false]
+                "categoryID": "1054449793545535569",
+                "roles": []
             },
             "tickets-website": {
-                "categoryID": false,
-                "roles": [false]
+                "categoryID": "1054449822276534332",
+                "roles": []
             },
             "tickets-shop": {
-                "categoryID": false,
-                "roles": [false]
+                "categoryID": "1054449873929375794",
+                "roles": []
             },
             "tickets-question": {
-                "categoryID": false,
-                "roles": [false]
+                "categoryID": "1054449914207285308",
+                "roles": []
             }
         }
     },
