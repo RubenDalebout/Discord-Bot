@@ -232,24 +232,58 @@ client.on('interactionCreate', (interaction) => {
                           if (!existingTicket) {
                             // Create the new channel within the category
                             guild.channels.create({
-                              name: "ticket-" + interaction.user.tag,
-                              type: Discord.ChannelType.GuildText,
-                              parent: categoryId,
-                              // your permission overwrites or other options here
-                            }).then(channel => {
-                              // Add the user ID and channel information to the tickets.json file
-                              tickets.push({
-                                channel: channel.id,
-                                owner: interaction.user.id,
-                                muted: false,
-                                allowedUsers: [interaction.user.id],
-                                allowedRoles: []
-                              });
-                      
-                              fs.writeFile('./tickets.json', JSON.stringify(tickets), 'utf8', function(err) {
-                                if (err) throw err;
-                                console.log('Successfully added user ID to tickets.json file');
-                              });
+                                name: "ticket-" + interaction.user.tag,
+                                type: Discord.ChannelType.GuildText,
+                                parent: categoryId,
+                                // Deny everyone access to the channel
+                                permissionOverwrites: [
+                                  {
+                                    id: guild.id,
+                                    deny: [Discord.PermissionsBitField.Flags.ViewChannel, Discord.PermissionsBitField.Flags.SendMessages, Discord.PermissionsBitField.Flags.ReadMessageHistory],
+                                  },
+                                  // Allow the interaction.user to view and send messages in the channel
+                                  {
+                                    id: interaction.user.id,
+                                    allow: [Discord.PermissionsBitField.Flags.ViewChannel, Discord.PermissionsBitField.Flags.SendMessages, Discord.PermissionsBitField.Flags.ReadMessageHistory],
+                                  },
+                                ],
+                              }).then(channel => {
+                                // Add the user ID and channel information to the tickets.json file
+                                tickets.push({
+                                    channel: channel.id,
+                                    owner: interaction.user.id,
+                                    muted: false,
+                                    allowedUsers: [interaction.user.id],
+                                    allowedRoles: []
+                                });
+                        
+                                fs.writeFile('./tickets.json', JSON.stringify(tickets), 'utf8', function(err) {
+                                    if (err) throw err;
+
+                                    channel.send(`<@${interaction.user.id}>`).then((message) => {
+                                        message.delete();
+                                    });
+                                    
+                                    // Send embed message in the channel
+                                    // Create a new embed message
+                                    const embed = new Discord.EmbedBuilder()
+                                    .setColor(config.bot.colors.primary)
+                                    .setTitle(obj.embed.title)
+                                    .setDescription(obj.embed.description.replace(new RegExp("\\\\n", "g"), "\n"))
+                                    .setThumbnail(config.bot.avatar) // Use the joined user's avatar as the thumbnail
+                                    .setTimestamp()
+                                    .setFooter({ 
+                                        text: config.server.name, 
+                                    });
+
+                                    // Send the embed message to the specified channel
+                                    channel.send({embeds: [embed]}).then((message) => {
+                                        // Delete the user's message
+                                        interaction.reply({content: 'ticket aangemaakt'}).then(() => {
+                                            interaction.deleteReply();
+                                        });
+                                    });
+                                });
                             }).catch(error => {
                               console.log(error)
                             });
