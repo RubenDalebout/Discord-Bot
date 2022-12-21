@@ -334,7 +334,7 @@ client.on('interactionCreate', (interaction) => {
                     const obj = config.tickets.categories[ticket.category];
 
                     // Check if the user has any of the specified roles
-                    if (message.member.roles.some(role => obj.roles.includes(role.id))) {
+                    if (interaction.member.roles.cache.some(role => obj.roles.includes(role.id))) {
                         // Toggle the frozen property
                         ticket.frozen = !ticket.frozen;
                     

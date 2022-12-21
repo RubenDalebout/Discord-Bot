@@ -23,7 +23,7 @@
         "categories": {
             "tickets-discord": {
                 "categoryID": "1054508025009950740",
-                "roles": [],
+                "roles": ["1055207853234855976"],
                 "embed": {
                     "title": "✨ BrotherHoods Discord Ticket ✨",
                     "description": "not written text"
@@ -31,7 +31,7 @@
             },
             "tickets-minecraft": {
                 "categoryID": "1054508086175473754",
-                "roles": [],
+                "roles": ["1055207853234855976"],
                 "embed": {
                     "title": "✨ BrotherHoods Minecraft Ticket ✨",
                     "description": "not written text"
@@ -39,7 +39,7 @@
             },
             "tickets-website": {
                 "categoryID": "1054508151573065809",
-                "roles": [],
+                "roles": ["1055207853234855976"],
                 "embed": {
                     "title": "✨ BrotherHoods Website Ticket ✨",
                     "description": "not written text"
@@ -47,7 +47,7 @@
             },
             "tickets-shop": {
                 "categoryID": "1054508202957479956",
-                "roles": [],
+                "roles": ["1055207853234855976"],
                 "embed": {
                     "title": "✨ BrotherHoods Shop Ticket ✨",
                     "description": "not written text"
@@ -55,7 +55,7 @@
             },
             "tickets-question": {
                 "categoryID": "1054508253272358975",
-                "roles": [],
+                "roles": ["1055207853234855976"],
                 "embed": {
                     "title": "✨ BrotherHoods Question Ticket ✨",
                     "description": "not written text"
