@@ -253,7 +253,7 @@ client.on('interactionCreate', (interaction) => {
                                 tickets.push({
                                     channel: channel.id,
                                     owner: interaction.user.id,
-                                    muted: false,
+                                    frozen: false,
                                     allowedUsers: [interaction.user.id],
                                     allowedRoles: []
                                 });
@@ -277,8 +277,22 @@ client.on('interactionCreate', (interaction) => {
                                         text: config.server.name, 
                                     });
 
+                                    const row = new Discord.ActionRowBuilder()
+                                    .addComponents(
+                                        new Discord.ButtonBuilder()
+                                            .setCustomId('ticket-close')
+                                            .setLabel('Close ticket')
+                                            .setStyle(Discord.ButtonStyle.Danger)
+                                            .setEmoji('🔐'),
+                                        new Discord.ButtonBuilder()
+                                        .setCustomId('ticket-freeze')
+                                        .setLabel('Freeze ticket')
+                                        .setStyle(Discord.ButtonStyle.Primary)
+                                        .setEmoji('🧊'),
+                                    );
+
                                     // Send the embed message to the specified channel
-                                    channel.send({embeds: [embed]}).then((message) => {
+                                    channel.send({embeds: [embed], components: [row]}).then((message) => {
                                         // Delete the user's message
                                         interaction.reply({content: 'ticket aangemaakt'}).then(() => {
                                             interaction.deleteReply();
@@ -297,6 +311,57 @@ client.on('interactionCreate', (interaction) => {
                       
                 }
             }
+        }
+    }
+
+    if (interaction.isButton()) {
+        // Frozen button
+        if (interaction.customId === 'ticket-freeze') {
+            // Get channel
+            const channel = interaction.channel;
+
+            // Read the tickets.json file
+            fs.readFile('tickets.json', (err, data) => {
+                if (err) throw err;
+            
+                // Parse the JSON data
+                const tickets = JSON.parse(data);
+            
+                // Check if the channel is a ticket
+                const ticket = tickets.find(t => t.channel === channel.id);
+                if (ticket) {
+                    // Toggle the frozen property
+                    ticket.frozen = !ticket.frozen;
+                
+                    // Write the updated tickets to the tickets.json file
+                    fs.writeFile('tickets.json', JSON.stringify(tickets), err => {
+                        if (err) throw err;
+
+                        // console.log(channel)
+                        // Update the permissions
+                        channel.permissionOverwrites.edit(channel.guild.roles.everyone.id, {
+                            [Discord.PermissionsBitField.Flags.SendMessages]: !ticket.frozen,
+                        });
+
+                        // Change the style of the button component
+                        const row = new Discord.ActionRowBuilder()
+                        .addComponents(
+                            new Discord.ButtonBuilder()
+                                .setCustomId('ticket-close')
+                                .setLabel('Close ticket')
+                                .setStyle(Discord.ButtonStyle.Danger)
+                                .setEmoji('🔐'),
+                            new Discord.ButtonBuilder()
+                            .setCustomId('ticket-freeze')
+                            .setLabel((ticket.frozen) ? "Unfreeze ticket" : "Freeze ticket")
+                            .setStyle(Discord.ButtonStyle.Primary)
+                            .setEmoji('🧊'),
+                        );
+
+                        interaction.update({components: [row]});
+                    });
+                }
+            });
         }
     }
 })
