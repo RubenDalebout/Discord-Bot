@@ -252,6 +252,7 @@ client.on('interactionCreate', (interaction) => {
                                 // Add the user ID and channel information to the tickets.json file
                                 tickets.push({
                                     channel: channel.id,
+                                    category: value,
                                     owner: interaction.user.id,
                                     frozen: false,
                                     allowedUsers: [interaction.user.id],
@@ -330,36 +331,43 @@ client.on('interactionCreate', (interaction) => {
                 // Check if the channel is a ticket
                 const ticket = tickets.find(t => t.channel === channel.id);
                 if (ticket) {
-                    // Toggle the frozen property
-                    ticket.frozen = !ticket.frozen;
-                
-                    // Write the updated tickets to the tickets.json file
-                    fs.writeFile('tickets.json', JSON.stringify(tickets), err => {
-                        if (err) throw err;
+                    const obj = config.tickets.categories[ticket.category];
 
-                        // console.log(channel)
-                        // Update the permissions
-                        channel.permissionOverwrites.edit(channel.guild.roles.everyone.id, {
-                            [Discord.PermissionsBitField.Flags.SendMessages]: !ticket.frozen,
+                    // Check if the user has any of the specified roles
+                    if (message.member.roles.some(role => obj.roles.includes(role.id))) {
+                        // Toggle the frozen property
+                        ticket.frozen = !ticket.frozen;
+                    
+                        // Write the updated tickets to the tickets.json file
+                        fs.writeFile('tickets.json', JSON.stringify(tickets), err => {
+                            if (err) throw err;
+
+                            // console.log(channel)
+                            // Update the permissions
+                            channel.permissionOverwrites.edit(channel.guild.roles.everyone.id, {
+                                [Discord.PermissionsBitField.Flags.SendMessages]: !ticket.frozen,
+                            });
+
+                            // Change the style of the button component
+                            const row = new Discord.ActionRowBuilder()
+                            .addComponents(
+                                new Discord.ButtonBuilder()
+                                    .setCustomId('ticket-close')
+                                    .setLabel('Close ticket')
+                                    .setStyle(Discord.ButtonStyle.Danger)
+                                    .setEmoji('🔐'),
+                                new Discord.ButtonBuilder()
+                                .setCustomId('ticket-freeze')
+                                .setLabel((ticket.frozen) ? "Unfreeze ticket" : "Freeze ticket")
+                                .setStyle(Discord.ButtonStyle.Primary)
+                                .setEmoji('🧊'),
+                            );
+
+                            interaction.update({components: [row]});
                         });
-
-                        // Change the style of the button component
-                        const row = new Discord.ActionRowBuilder()
-                        .addComponents(
-                            new Discord.ButtonBuilder()
-                                .setCustomId('ticket-close')
-                                .setLabel('Close ticket')
-                                .setStyle(Discord.ButtonStyle.Danger)
-                                .setEmoji('🔐'),
-                            new Discord.ButtonBuilder()
-                            .setCustomId('ticket-freeze')
-                            .setLabel((ticket.frozen) ? "Unfreeze ticket" : "Freeze ticket")
-                            .setStyle(Discord.ButtonStyle.Primary)
-                            .setEmoji('🧊'),
-                        );
-
-                        interaction.update({components: [row]});
-                    });
+                    } else {
+                        interaction.reply({ content: 'You do not have permissions for this', ephemeral: true });
+                    }
                 }
             });
         }
