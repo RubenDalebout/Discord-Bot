@@ -2,8 +2,8 @@ require('dotenv').config(); // Import dotenv config
 const fs = require('fs');
 
 const Discord = require('discord.js'); // Import the discord.js module
-// const config = require('./config.json'); // Import the config.json file
-const config = require('./staging-config.json'); // Import the config.json file
+const config = require('./config.json'); // Import the config.json file
+// const config = require('./staging-config.json'); // Import the config.json file
 
 const client = new Discord.Client({
     intents: [
