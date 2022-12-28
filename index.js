@@ -316,6 +316,34 @@ client.on('interactionCreate', (interaction) => {
     }
 
     if (interaction.isButton()) {
+        // Close button
+        if (interaction.customId === 'ticket-close') {
+            // Get channel
+            const channel = interaction.channel;
+
+            // Read the tickets.json file
+            fs.readFile('tickets.json', (err, data) => {
+                if (err) throw err;
+            
+                // Parse the JSON data
+                const tickets = JSON.parse(data);
+            
+                // Check if the channel is a ticket
+                const ticket = tickets.find(t => t.channel === channel.id);
+                if (ticket) {
+                    const obj = config.tickets.categories[ticket.category];
+
+                    // Check if the user has any of the specified roles
+                    if (interaction.member.roles.cache.some(role => obj.roles.includes(role.id)) || interaction.member.id === ticket.owner) {
+                        // Toggle the frozen property
+                        
+                        
+                    } else {
+                        interaction.reply({ content: 'You do not have permissions for this', ephemeral: true });
+                    }
+                }
+            });
+        }
         // Frozen button
         if (interaction.customId === 'ticket-freeze') {
             // Get channel
@@ -343,10 +371,12 @@ client.on('interactionCreate', (interaction) => {
                             if (err) throw err;
 
                             // console.log(channel)
-                            // Update the permissions
-                            channel.permissionOverwrites.edit(channel.guild.roles.everyone.id, {
-                                [Discord.PermissionsBitField.Flags.SendMessages]: !ticket.frozen,
-                            });
+                            for (const uuid of ticket.allowedUsers) {
+                                // Update the permissions
+                                channel.permissionOverwrites.edit(uuid, {
+                                    [Discord.PermissionsBitField.Flags.SendMessages]: !ticket.frozen,
+                                });
+                            }
 
                             // Change the style of the button component
                             const row = new Discord.ActionRowBuilder()
