@@ -294,10 +294,20 @@ client.on('interactionCreate', (interaction) => {
 
                                     // Send the embed message to the specified channel
                                     channel.send({embeds: [embed], components: [row]}).then((message) => {
-                                        // Delete the user's message
-                                        interaction.reply({content: 'ticket aangemaakt'}).then(() => {
-                                            interaction.deleteReply();
-                                        });
+                                        const select = new Discord.StringSelectMenuBuilder()
+                                        .setCustomId('tickets-select')
+                                        .setPlaceholder('Nothing selected');
+
+                                        for (const option of config.embeds.tickets.options) {
+                                            select.addOptions({
+                                                label: option.label,
+                                                value: option.ID,
+                                                emoji: option.emoji.id
+                                            });
+                                        }
+
+                                        const updaterow = new Discord.ActionRowBuilder().addComponents(select);
+                                        interaction.update({components: [updaterow]})
                                     });
                                 });
                             }).catch(error => {
@@ -316,6 +326,56 @@ client.on('interactionCreate', (interaction) => {
     }
 
     if (interaction.isButton()) {
+        // Close confirm button
+        if (interaction.customId === 'ticket-close-confirm') {
+            // Get channel
+            const channel = interaction.channel;
+          
+            // Read the tickets.json file
+            fs.readFile('tickets.json', (err, data) => {
+                if (err) throw err;
+            
+                // Parse the JSON data
+                const tickets = JSON.parse(data);
+            
+                // Check if the channel is a ticket
+                const ticket = tickets.find(t => t.channel === channel.id);
+                if (ticket) {
+                    const obj = config.tickets.categories[ticket.category];
+            
+                    // Check if the user has any of the specified roles
+                    if (interaction.member.roles.cache.some(role => obj.roles.includes(role.id)) || interaction.member.id === ticket.owner) {
+                        // Create a new array without the ticket
+                        const updatedTickets = tickets.filter(t => t.channel !== ticket.channel);
+                
+                        // Write the updated array to the tickets.json file
+                        fs.writeFile('tickets.json', JSON.stringify(updatedTickets), err => {
+                            if (err) throw err;
+                
+                            // Delete the channel
+                            channel.delete()
+                            .then(() => {
+                                // Get the channel object
+                                const audit = client.channels.cache.get(config.tickets.audit);
+
+                                // Create the embed object
+                                const embed = new Discord.EmbedBuilder()
+                                .setTitle(channel.name)
+                                .setDescription(`is closed by: <@${interaction.user.id}>`)
+                                .setColor(config.bot.colors.primary)
+                                .setTimestamp()
+
+                                // Send the embed message in the channel
+                                audit.send({ embeds: [embed] });
+                            })
+                            .catch(console.error);
+                        });
+                    } else {
+                        interaction.reply({ content: 'You do not have permissions for this', ephemeral: true });
+                    }
+                }
+            });
+        }          
         // Close button
         if (interaction.customId === 'ticket-close') {
             // Get channel
@@ -335,9 +395,24 @@ client.on('interactionCreate', (interaction) => {
 
                     // Check if the user has any of the specified roles
                     if (interaction.member.roles.cache.some(role => obj.roles.includes(role.id)) || interaction.member.id === ticket.owner) {
-                        // Toggle the frozen property
-                        
-                        
+                        // Create the embed message
+                        const embed = new Discord.EmbedBuilder()
+                        .setTitle('Close Ticket')
+                        .setDescription('Are you sure you want to close this ticket?')
+                        .setColor(config.bot.colors.primary)
+
+                        // Change the style of the button component
+                        const row = new Discord.ActionRowBuilder()
+                        .addComponents(
+                            new Discord.ButtonBuilder()
+                            .setCustomId('ticket-close-confirm')
+                            .setLabel('Yes close ticket')
+                            .setStyle(Discord.ButtonStyle.Danger)
+                            .setEmoji('🔒'),
+                        );
+
+                        // Send the embed message
+                        interaction.reply({ embeds:[embed], components: [row], ephemeral: true });      
                     } else {
                         interaction.reply({ content: 'You do not have permissions for this', ephemeral: true });
                     }

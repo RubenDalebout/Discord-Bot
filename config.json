@@ -20,6 +20,7 @@
         "emojis": ["👍", "👎"]
     },
     "tickets": {
+        "audit": "1057730438690504774",
         "categories": {
             "tickets-discord": {
                 "categoryID": "1054508025009950740",
