@@ -6,5 +6,5 @@ npm install
 ```
 ## Start bot
 ```sh
-node bot.js
+node index.js
 ```
